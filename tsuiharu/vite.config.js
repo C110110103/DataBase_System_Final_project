@@ -5,6 +5,6 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 80, // 设置端口为 80
+    port: 3777, // 设置端口为 80
   },
 });

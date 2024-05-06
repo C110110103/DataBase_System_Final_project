@@ -1,7 +1,7 @@
-html {
+body {
   /* background-color: #333333; */
   background-image: url("/loginRegister/login2.jpg");
-  background-size: cover; /* 讓背景圖片填滿整個視窗 */
-  background-repeat: no-repeat; /* 避免圖片重複 */
-  background-position: center; /* 設置背景圖片位置為中心 */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }

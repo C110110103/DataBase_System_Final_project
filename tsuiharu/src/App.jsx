@@ -13,11 +13,7 @@ function App() {
           <Route
             path="/register"
             element={
-              <Suspense
-              // fallback={
-              //   <Loading icon={"address card outline"} text={"登入"} />
-              // }
-              >
+              <Suspense fallback={<div>Loading...</div>} >
                 <Register />
               </Suspense>
             }
