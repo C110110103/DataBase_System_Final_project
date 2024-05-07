@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 
-const Submit = (data, RegisterApiurl, headers) => {
-  // console.log(data)
+const LoginSubmit = (data, loginApiurl, headers) => {
+  console.log("login submit ", data)
   axios.post(
-    RegisterApiurl, data, {
+    loginApiurl, data, {
     headers: headers
   })
     .then((res) => {
@@ -15,4 +15,4 @@ const Submit = (data, RegisterApiurl, headers) => {
     })
 }
 
-export default Submit;
+export default LoginSubmit;

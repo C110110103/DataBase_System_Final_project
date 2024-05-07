@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 
 const Register = lazy(() => import("./components/register/Register"));
+const Login = lazy(() => import("./components/login/login"));
 
 function App() {
 
@@ -19,6 +20,17 @@ function App() {
             }
             exact
           ></Route>
+
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={<div>Loading...</div>} >
+                <Login />
+              </Suspense>
+            }
+            exact
+          ></Route>
+
         </Routes>
       </BrowserRouter>
 

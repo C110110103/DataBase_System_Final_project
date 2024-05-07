@@ -16,7 +16,7 @@ var app = express();
 var http = require("http");
 var server = http.createServer(app);
 
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:7777"];
 
 app.use(express.json());
 
@@ -47,7 +47,6 @@ app.use("/users", usersRouter);
 
 initialDatabase()
   .then(() => {
-    console.log("Database initialized successfully");
     // 在数据库初始化完成后再启动服务器监听端口
     server.listen("3000");
   })
