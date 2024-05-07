@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const initialDatabase = require("./tools/initialDataBase").initialDatabase;
 
 require("dotenv").config();
 
@@ -44,4 +45,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
-server.listen("3000");
+initialDatabase()
+  .then(() => {
+    console.log("Database initialized successfully");
+    // 在数据库初始化完成后再启动服务器监听端口
+    server.listen("3000");
+  })
+  .catch((error) => {
+    console.error("Error initializing database: ", error);
+  });
