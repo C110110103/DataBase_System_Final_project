@@ -1,8 +1,10 @@
 const sendMail = require("../tools/sendMail");
 const registerValidation = require("../tools/validation").registerValidation;
+const loginValidation = require("../tools/validation").loginValidation;
 const userModels = require("../models/userModels");
 const uuid = require("uuid");
 const moment = require("moment-timezone");
+const jwt = require("jsonwebtoken");
 
 // 设置时区为台湾时间
 moment.tz.setDefault("Asia/Taipei");
@@ -95,6 +97,43 @@ register = async (req, res) => {
   }
 };
 
+login = async (req, res) => {
+  let { error } = loginValidation(req.body);
+  if (error) {
+    return res.status(400).send({ message: "This case is not allowed", error });
+  }
+
+  const emailExist = await userModels.findEmail(req.body.email);
+  if (emailExist.length === 0) {
+    console.log("emailExist :", emailExist);
+    return res.status(400).send({ message: "Email is not found" });
+  }
+
+  const cmpPasswordresult = await userModels.comparePassword(
+    req.body.password,
+    emailExist[0].password
+  );
+
+  if (cmpPasswordresult) {
+    let Account = {
+      userId: emailExist[0].userId,
+      username: emailExist[0].username,
+      email: emailExist[0].email,
+      create_time: emailExist[0].create_time,
+    };
+    const tokenObject = { _id: emailExist.userId, _email: emailExist.email };
+    const token = jwt.sign(tokenObject, process.env.PASSPORT_SECRET);
+    return res.send({
+      msg: "Login successful",
+      token: "JWT " + token,
+      user: Account,
+    });
+  } else {
+    return res.status(400).send({ message: "Password is incorrect" });
+  }
+};
+
 module.exports = {
   register,
+  login,
 };

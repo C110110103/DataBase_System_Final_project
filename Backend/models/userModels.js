@@ -72,9 +72,18 @@ generateHash = async function (password) {
   }
 };
 
+comparePassword = async function (password, hash) {
+  try {
+    return await bcrypt.compare(password, hash);
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findEmail,
   findUsername,
   createNewAccount,
   generateHash,
+  comparePassword,
 };
