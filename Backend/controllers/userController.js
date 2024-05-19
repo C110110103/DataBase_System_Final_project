@@ -117,7 +117,7 @@ login = async (req, res) => {
   if (cmpPasswordresult) {
     let Account = {
       userId: emailExist[0].userId,
-      username: emailExist[0].username,
+      userName: emailExist[0].userName,
       email: emailExist[0].email,
       create_time: emailExist[0].create_time,
     };

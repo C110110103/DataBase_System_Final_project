@@ -3,14 +3,12 @@ import { createContext, useState } from "react";
 export const StoreContext = createContext();
 
 export const GlobleVar = ({ children }) => {
-  const [haveToken, setHaveToken] = useState(true);
-  const [userPermission, setUserPermission] = useState("");
-  const [data, setData] = useState({
+  const [userData, setUserData] = useState({
     userName: "",
     email: "",
-    role: "",
-    password: "",
-    id: "",
+    userId: "",
+    create_time: "",
+    token: ""
   });
 
   const backEndUrl = "http://localhost:3000";
@@ -18,9 +16,7 @@ export const GlobleVar = ({ children }) => {
   const headers = { 'Content-Type': 'application/json' };
 
   const store = {
-    HaveToken: [haveToken, setHaveToken],
-    userPermission: [userPermission, setUserPermission],
-    userData: [data, setData],
+    GloUserData: [userData, setUserData],
     GloBackEndUrl: backEndUrl,
     GloFontEndUrl: fontEndUrl,
     Gloheaders: headers,

@@ -9,6 +9,9 @@ require("dotenv").config();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var formsRouter = require("./routes/forms");
+const passport = require("passport");
+require("./util/passport")(passport);
 
 var app = express();
 
@@ -44,6 +47,11 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use(
+  "/forms",
+  passport.authenticate("jwt", { session: false }),
+  formsRouter
+);
 
 initialDatabase()
   .then(() => {

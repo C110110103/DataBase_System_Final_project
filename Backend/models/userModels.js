@@ -37,6 +37,24 @@ findUsername = (username) => {
   });
 };
 
+findId = (userId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select * from user where userId = ?";
+    var sqlArr = [userId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("findId 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("findId 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
 createNewAccount = (newAccount) => {
   return new Promise((resolve, reject) => {
     var sql =
@@ -83,6 +101,7 @@ comparePassword = async function (password, hash) {
 module.exports = {
   findEmail,
   findUsername,
+  findId,
   createNewAccount,
   generateHash,
   comparePassword,

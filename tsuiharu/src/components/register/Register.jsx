@@ -50,8 +50,9 @@ export default function Register() {
             style={{
               border: "2px solid #ccc",
               borderRadius: "5px",
-              padding: "60px",
-              color: "white"
+              padding: "100px",
+              color: "white",
+              width: "20%",
             }}
           >
             <h1>註冊</h1>
@@ -59,7 +60,13 @@ export default function Register() {
               <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
                 <label style={{ textAlign: "left" }} htmlFor="username">姓名</label>
                 <input
-                  style={{ marginTop: '10px', color: "black" }} // 將此處的 textAlign 設置為 'left'
+                  style={{
+                    marginTop: '10px',
+                    color: "black",
+                    textAlign: 'left',
+                    border: '1px solid #ccc', // 外框樣式
+                    borderRadius: '5px' // 圓角半徑
+                  }}
                   type="text"
                   id="username"
                   name="username"
@@ -70,7 +77,13 @@ export default function Register() {
               <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '10px' }}>
                 <label style={{ textAlign: "left" }} htmlFor="email">信箱</label>
                 <input
-                  style={{ marginTop: '10px', color: "black" }} // 將此處的 textAlign 設置為 'left'
+                  style={{
+                    marginTop: '10px',
+                    color: "black",
+                    textAlign: 'left',
+                    border: '1px solid #ccc', // 外框樣式
+                    borderRadius: '5px' // 圓角半徑
+                  }}
                   type="text"
                   id="email"
                   name="email"
