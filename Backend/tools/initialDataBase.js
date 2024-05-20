@@ -26,6 +26,31 @@ async function initialDatabase() {
       email VARCHAR(255) NOT NULL
       )`
     );
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS form (
+      formId VARCHAR(500) NOT NULL PRIMARY KEY,
+      formName VARCHAR(500) NOT NULL,
+      createdTime VARCHAR(50) NOT NULL,
+      creatorId VARCHAR(50) NOT NULL
+      )`
+    );
+
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS formQuestion (
+      formQuestionId VARCHAR(50) NOT NULL PRIMARY KEY,
+      formId VARCHAR(50) NOT NULL,
+      Description VARCHAR(500) NOT NULL,
+      questionType VARCHAR(50) NOT NULL
+      )`
+    );
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS formOption (
+      formOptionId VARCHAR(50) NOT NULL PRIMARY KEY,
+      formQuestionId VARCHAR(50) NOT NULL,
+      Description VARCHAR(500) NOT NULL
+      )`
+    );
+
     console.log("資料庫初始化完成");
   } catch (error) {
     console.error("Error occurred while initializing the database", error);

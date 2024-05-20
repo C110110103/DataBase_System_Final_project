@@ -1,6 +1,8 @@
 import { Plus, Trash } from '@rsuite/icons';
+import axios from 'axios';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Col,
@@ -17,8 +19,6 @@ import {
 } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css';
 import { StoreContext } from '../globleVar/GlobleVar';
-import SubmitForm from './submitForm';
-
 
 const questionTypes = [
   { label: 'Single Choice', value: 'single' },
@@ -26,23 +26,39 @@ const questionTypes = [
   { label: 'Text', value: 'text' }
 ];
 
-function CreateForm() {
+function ModifyForm() {
   const { GloBackEndUrl, Gloheaders } = useContext(StoreContext);
   const backEndUrl = GloBackEndUrl;
-  const headers = Gloheaders;
 
-  const createFormApiurl = `${backEndUrl}/forms/createForm`;
+  const { FormId } = useParams();
+  const navigate = useNavigate();
+
+  const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}`;
+  const updateFormApiurl = `${backEndUrl}/forms/updateForm/${FormId}`;
   const userData = localStorage.getItem('userData');
   const token = JSON.parse(userData).token;
-  const userId = JSON.parse(userData).user.userId;
-
 
   const [formName, setFormName] = useState('');
-  const [questions, setQuestions] = useState([{
-    questionText: '',
-    questionType: 'single',
-    options: ['']
-  }]);
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+    if (token && getFormByIdApiurl) {
+      axios.get(getFormByIdApiurl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${token}`
+        }
+      })
+        .then((res) => {
+          console.log(res.data);
+          setFormName(res.data.formName);
+          setQuestions(res.data.questions);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [token, getFormByIdApiurl, FormId]);
 
   const handleAddQuestion = () => {
     setQuestions([...questions, { questionText: '', questionType: 'single', options: [''] }]);
@@ -83,13 +99,8 @@ function CreateForm() {
     setQuestions(newQuestions);
   };
 
-  const handleCreateForm = (e) => {
+  const handleUpdateForm = (e) => {
     e.preventDefault();
-
-    // 獲取台灣時間
-    const taiwanTime = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
-
-    console.log('Form created:', formName, questions, taiwanTime);
 
     if (!formName) {
       enqueueSnackbar("不允許formName為空", { variant: 'error' });
@@ -111,25 +122,37 @@ function CreateForm() {
         }
       }
     }
+
     const data = {
       formName,
-      questions,
-      createdTime: taiwanTime,
-      creatorId: userId
+      questions
     };
-    SubmitForm(token, data, createFormApiurl, headers);
-  };
 
+    // axios.put(updateFormApiurl, data, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `${token}`
+    //   }
+    // })
+    //   .then((res) => {
+    //     enqueueSnackbar("表單已更新", { variant: 'success' });
+    //     navigate('/');
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     enqueueSnackbar("表單更新失敗", { variant: 'error' });
+    //   });
+  };
 
   return (
     <SnackbarProvider>
       <Container>
         <Header style={{
-          position: 'fixed',  // Fix the position
+          position: 'fixed',
           top: 0,
           left: 0,
-          width: '100%',  // Ensure it spans the full width
-          zIndex: 1000,  // Ensure it is above other content
+          width: '100%',
+          zIndex: 1000,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -143,14 +166,14 @@ function CreateForm() {
           <Button
             style={{
               fontSize: '24px',
-              height: '100%',  // Changed 'Height' to 'height'
+              height: '100%',
               marginBottom: 'auto',
             }}
             appearance="primary"
             size='lg'
-            onClick={(e) => handleCreateForm(e)}
+            onClick={(e) => handleUpdateForm(e)}
           >
-            建立表單
+            更新表單
           </Button>
         </Header>
 
@@ -263,8 +286,8 @@ function CreateForm() {
           <p style={{ textAlign: 'center' }}>© 2024 Form Builder</p>
         </Footer>
       </Container>
-    </SnackbarProvider >
+    </SnackbarProvider>
   );
 }
 
-export default CreateForm;
+export default ModifyForm;

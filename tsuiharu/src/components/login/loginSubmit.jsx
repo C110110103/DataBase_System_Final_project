@@ -2,7 +2,7 @@ import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 
 
-const LoginSubmit = (data, loginApiurl, headers) => {
+const LoginSubmit = (data, loginApiurl, headers, setResult) => {
 
 
   console.log("login submit ", data)
@@ -25,6 +25,8 @@ const LoginSubmit = (data, loginApiurl, headers) => {
       if (res.data.msg === "Login successful") {
         enqueueSnackbar("登入成功", { variant: 'success' });
       }
+
+      setResult(true)
     })
     .catch((err) => {
       console.log(err)

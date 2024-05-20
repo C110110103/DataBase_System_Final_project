@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 const Register = lazy(() => import("./components/register/Register"));
 const Login = lazy(() => import("./components/login/login"));
 const CreateForm = lazy(() => import("./components/createForm/CreateForm"));
+const Home = lazy(() => import("./components/home/Home"));
+const ModifyForm = lazy(() => import("./components/modifyForm/ModifyForm"));
 
 function App() {
 
@@ -12,6 +14,18 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<div>Loading...</div>} >
+                <Home />
+              </Suspense>
+            }
+            exact
+          ></Route>
+
+
           <Route
             path="/register"
             element={
@@ -41,6 +55,19 @@ function App() {
             }
             exact
           ></Route>
+
+          <Route
+            path="/modifyForm/:FormId"
+            element={
+              <Suspense fallback={<div>Loading...</div>} >
+                <ModifyForm />
+              </Suspense>
+            }
+            exact
+          ></Route>
+
+
+
 
         </Routes>
       </BrowserRouter>

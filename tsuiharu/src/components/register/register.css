@@ -1,5 +1,4 @@
-body {
-  /* background-color: #333333; */
+.login-background {
   background-image: url("/loginRegister/login2.jpg");
   background-size: cover;
   background-repeat: no-repeat;

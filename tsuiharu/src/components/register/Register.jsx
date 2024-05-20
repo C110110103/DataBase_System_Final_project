@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from 'rsuite';
 import { StoreContext } from '../globleVar/GlobleVar';
 import SubmitRegister from './SubmitRegister';
-import "./register.css";
+// import "./register.css";
 
 export default function Register() {
   const [data, setData] = useState({

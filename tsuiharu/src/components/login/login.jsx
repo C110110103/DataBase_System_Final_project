@@ -1,9 +1,9 @@
 import { SnackbarProvider } from 'notistack';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from 'rsuite';
 import { StoreContext } from '../globleVar/GlobleVar';
-import "../register/register.css";
+// import "../register/register.css";
 import loginSubmit from './loginSubmit';
 
 
@@ -13,12 +13,20 @@ export default function Login() {
     email: "",
     password: ""
   })
+  const [result, setResult] = useState(null);
 
   const { GloBackEndUrl, Gloheaders } = useContext(StoreContext);
   const backEndUrl = GloBackEndUrl;
   const headers = Gloheaders;
 
   const loginApiurl = `${backEndUrl}/users/login`
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (result) {
+      navigate('/');
+    }
+  }, [result, navigate]);
 
   const changeData = (e) => {
     setData({
@@ -31,7 +39,7 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault(); // 阻止默认提交行为
     console.log("提交")
-    loginSubmit(data, loginApiurl, headers); // 调用 Submit 函数
+    loginSubmit(data, loginApiurl, headers, setResult); // 调用 Submit 函数
   }
 
 

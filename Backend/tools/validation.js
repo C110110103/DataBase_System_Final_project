@@ -16,7 +16,18 @@ const loginValidation = (data) => {
   return schema.validate(data);
 };
 
+const createFormValidation = (data) => {
+  const schema = joi.object({
+    createdTime: joi.string().required(),
+    formName: joi.string().required(),
+    questions: joi.array().required(),
+    creatorId: joi.string().required(),
+  });
+  return schema.validate(data);
+};
+
 module.exports = {
   registerValidation,
   loginValidation,
+  createFormValidation,
 };
