@@ -121,7 +121,10 @@ login = async (req, res) => {
       email: emailExist[0].email,
       create_time: emailExist[0].create_time,
     };
-    const tokenObject = { _id: emailExist.userId, _email: emailExist.email };
+    const tokenObject = {
+      _id: emailExist[0].userId,
+      _email: emailExist[0].email,
+    };
     const token = jwt.sign(tokenObject, process.env.PASSPORT_SECRET);
     return res.send({
       msg: "Login successful",

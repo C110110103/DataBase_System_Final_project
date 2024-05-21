@@ -34,7 +34,7 @@ function ModifyForm() {
   const navigate = useNavigate();
 
   const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}`;
-  const updateFormApiurl = `${backEndUrl}/forms/updateForm/${FormId}`;
+  const modifyFormApiurl = `${backEndUrl}/forms/modifyForm`;
   const userData = localStorage.getItem('userData');
   const token = JSON.parse(userData).token;
 
@@ -124,25 +124,38 @@ function ModifyForm() {
     }
 
     const data = {
+      FormId,
       formName,
       questions
     };
 
-    // axios.put(updateFormApiurl, data, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `${token}`
-    //   }
-    // })
-    //   .then((res) => {
-    //     enqueueSnackbar("表單已更新", { variant: 'success' });
-    //     navigate('/');
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     enqueueSnackbar("表單更新失敗", { variant: 'error' });
-    //   });
+    console.log("data", data)
+
+    axios.patch(modifyFormApiurl, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${token}`
+      }
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.message === "modifyForm successful") {
+          enqueueSnackbar("表單已更新", { variant: 'success' });
+          setTimeout(() => {
+            navigate('/home');
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar("表單更新失敗", { variant: 'error' });
+      });
   };
+
+  const handleReturnHome = (e) => {
+    e.preventDefault();
+    navigate('/home');
+  }
 
   return (
     <SnackbarProvider>
@@ -157,12 +170,31 @@ function ModifyForm() {
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
+          <div style={{ width: "10%", marginBottom: '20px' }}>
+            <h4>表單名稱 : </h4>
+          </div>
+
           <Input
             placeholder="Enter form name"
             value={formName}
             onChange={(value) => setFormName(value)}
-            style={{ fontSize: '20px', marginBottom: '20px', width: '95%' }}
+            style={{ fontSize: '20px', marginBottom: '20px', width: '80%' }}
           />
+
+          <Button
+            style={{
+              fontSize: '24px',
+              height: '100%',
+              marginBottom: 'auto',
+              marginRight: '1rem',
+              marginLeft: '1rem',
+            }}
+            appearance="primary"
+            size='lg'
+            onClick={(e) => handleReturnHome(e)}
+          >
+            回到首頁
+          </Button>
           <Button
             style={{
               fontSize: '24px',

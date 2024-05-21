@@ -24,7 +24,9 @@ export default function Login() {
 
   useEffect(() => {
     if (result) {
-      navigate('/');
+      setTimeout(() => {
+        navigate('/home');
+      }, 500);
     }
   }, [result, navigate]);
 

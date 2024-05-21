@@ -1,6 +1,7 @@
 import { Plus, Trash } from '@rsuite/icons';
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Col,
@@ -35,6 +36,8 @@ function CreateForm() {
   const userData = localStorage.getItem('userData');
   const token = JSON.parse(userData).token;
   const userId = JSON.parse(userData).user.userId;
+  const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
 
   const [formName, setFormName] = useState('');
@@ -43,6 +46,16 @@ function CreateForm() {
     questionType: 'single',
     options: ['']
   }]);
+
+
+  useEffect(() => {
+    if (result) {
+      setTimeout(() => {
+        navigate('/home');
+      }, 500);
+    }
+  }, [result, navigate]);
+
 
   const handleAddQuestion = () => {
     setQuestions([...questions, { questionText: '', questionType: 'single', options: [''] }]);
@@ -117,8 +130,13 @@ function CreateForm() {
       createdTime: taiwanTime,
       creatorId: userId
     };
-    SubmitForm(token, data, createFormApiurl, headers);
+    SubmitForm(token, data, createFormApiurl, headers, setResult);
   };
+
+  const handleReturnHome = (e) => {
+    e.preventDefault();
+    navigate('/home');
+  }
 
 
   return (
@@ -134,12 +152,30 @@ function CreateForm() {
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
+          <div style={{ width: "10%", marginBottom: '20px' }}>
+            <h4>表單名稱 : </h4>
+          </div>
           <Input
             placeholder="Enter form name"
             value={formName}
             onChange={(value) => setFormName(value)}
-            style={{ fontSize: '20px', marginBottom: '20px', width: '95%' }}
+            style={{ fontSize: '20px', marginBottom: '20px', width: '80%' }}
           />
+
+          <Button
+            style={{
+              fontSize: '24px',
+              height: '100%',
+              marginBottom: 'auto',
+              marginRight: '1rem',
+              marginLeft: '1rem',
+            }}
+            appearance="primary"
+            size='lg'
+            onClick={(e) => handleReturnHome(e)}
+          >
+            回到首頁
+          </Button>
           <Button
             style={{
               fontSize: '24px',

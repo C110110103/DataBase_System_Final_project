@@ -163,6 +163,78 @@ modiflyForm = (newForm) => {
   });
 };
 
+deleteFormQuestions = (formId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "delete from formQuestion where formId = ?";
+    var sqlArr = [formId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("deleteFormQuestions 删除出错 : ", err);
+        reject(err);
+      } else {
+        console.log("deleteFormQuestions 删除结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+findFormQustionId = (formId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select formQuestionId from formQuestion where formId = ?";
+    var sqlArr = [formId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("findFormQustionId 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("findFormQustionId 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+deleteFormOptions = (formQuestionId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "delete from formOption where formQuestionId = ?";
+    var sqlArr = [formQuestionId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("deleteFormOptions 删除出错 : ", err);
+        reject(err);
+      } else {
+        console.log("deleteFormOptions 删除结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+deleteForm = (formId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "delete from form where formId = ?";
+    var sqlArr = [formId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("deleteForm 删除出错 : ", err);
+        reject(err);
+      } else {
+        console.log("deleteForm 删除结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
 module.exports = {
   createForm,
   createFormQuestion,
@@ -172,4 +244,8 @@ module.exports = {
   getFormQuestionsById,
   getFormOptionsById,
   modiflyForm,
+  deleteFormQuestions,
+  findFormQustionId,
+  deleteFormOptions,
+  deleteForm,
 };

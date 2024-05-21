@@ -150,7 +150,7 @@ const getFormById = async (req, res) => {
 
 modifyForm = async (req, res) => {
   let newForm = {
-    formId: req.body.formId,
+    formId: req.body.FormId,
     formName: req.body.formName,
   };
 
@@ -163,6 +163,137 @@ modifyForm = async (req, res) => {
       error: e,
     });
   }
+
+  let questions = req.body.questions;
+  let questionsId = [];
+
+  try {
+    let data = await formModels.findFormQustionId(newForm.formId);
+    for (let i = 0; i < data.length; i++) {
+      questionsId.push(data[i].formQuestionId);
+    }
+    console.log("data", questionsId);
+  } catch (e) {
+    console.log("findFormQustionId occurred error:", e);
+    return res.status(500).send({
+      message: "findFormQustionId Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  try {
+    await formModels.deleteFormQuestions(newForm.formId);
+  } catch (e) {
+    console.log("deleteFormQuestions occurred error:", e);
+    return res.status(500).send({
+      message: "deleteFormQuestions Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  for (let i = 0; i < questionsId.length; i++) {
+    try {
+      await formModels.deleteFormOptions(questionsId[i]);
+    } catch (e) {
+      console.log("deleteFormOptions occurred error:", e);
+      return res.status(500).send({
+        message: "deleteFormOptions Error occurred while querying database",
+        error: e,
+      });
+    }
+  }
+
+  for (let i = 0; i < questions.length; i++) {
+    let newQuestion = {
+      formQuestionId: uuid.v4(),
+      formId: newForm.formId,
+      Description: questions[i].questionText,
+      questionType: questions[i].questionType,
+    };
+
+    try {
+      await formModels.createFormQuestion(newQuestion);
+    } catch (e) {
+      console.log("createFormQuestion occurred error:", e);
+      return res.status(500).send({
+        message: "createFormQuestion Error occurred while querying database",
+        error: e,
+      });
+    }
+
+    for (let j = 0; j < questions[i].options.length; j++) {
+      let newOption = {
+        formOptionId: uuid.v4(),
+        formQuestionId: newQuestion.formQuestionId,
+        Description: questions[i].options[j],
+      };
+
+      try {
+        await formModels.createFormOption(newOption);
+      } catch (e) {
+        console.log("createFormOption occurred error:", e);
+        return res.status(500).send({
+          message: "createFormOption Error occurred while querying database",
+          error: e,
+        });
+      }
+    }
+  }
+
+  return res.status(200).send({ message: "modifyForm successful" });
+};
+
+deleteForm = async (req, res) => {
+  let formId = req.params.FormId;
+
+  try {
+    await formModels.deleteForm(formId);
+  } catch (e) {
+    console.log("deleteForm occurred error:", e);
+    return res.status(500).send({
+      message: "deleteForm Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  let questionsId = [];
+
+  try {
+    let data = await formModels.findFormQustionId(formId);
+    for (let i = 0; i < data.length; i++) {
+      questionsId.push(data[i].formQuestionId);
+    }
+  } catch (e) {
+    console.log("findQuestionId occurred error:", e);
+    return res.status(500).send({
+      message: "findQuestionId Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  try {
+    await formModels.deleteFormQuestions(formId);
+  } catch (e) {
+    console.log("deleteFormQuestions occurred error:", e);
+    return res.status(500).send({
+      message: "deleteFormQuestions Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  for (let i = 0; i < questionsId.length; i++) {
+    try {
+      await formModels.deleteFormOptions(questionsId[i]);
+    } catch (e) {
+      console.log("deleteFormOptions occurred error:", e);
+      return res.status(500).send({
+        message: "deleteFormOptions Error occurred while querying database",
+        error: e,
+      });
+    }
+  }
+
+  return res.status(200).send({ message: "deleteForm successful" });
 };
 
 module.exports = {
@@ -170,4 +301,5 @@ module.exports = {
   getAllform,
   getFormById,
   modifyForm,
+  deleteForm,
 };

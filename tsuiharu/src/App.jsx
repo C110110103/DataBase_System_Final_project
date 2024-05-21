@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 
 const Register = lazy(() => import("./components/register/Register"));
@@ -14,9 +14,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route
-            path="/"
+            path="/home"
             element={
               <Suspense fallback={<div>Loading...</div>} >
                 <Home />

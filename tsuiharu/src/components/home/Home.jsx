@@ -24,12 +24,14 @@ export default function Home() {
   const token = JSON.parse(userData).token;
   const creatorId = JSON.parse(userData).user.userId;
   const createFormApiurl = `${backEndUrl}/forms/getForm/${creatorId}`;
+  const [updateForm, setUpdateForm] = useState(false);
+
 
   const [forms, setForms] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token && createFormApiurl) {
+    if (token && createFormApiurl || updateForm === true) {
       axios.get(createFormApiurl, {
         headers: {
           'Content-Type': 'application/json',
@@ -39,12 +41,13 @@ export default function Home() {
         .then((res) => {
           console.log(res.data);
           setForms(res.data);
+          setUpdateForm(false);
         })
         .catch((err) => {
           console.log(err);
         });
     }
-  }, [token, createFormApiurl, navigate]);
+  }, [token, createFormApiurl, navigate, updateForm]);
 
   useEffect(() => {
     if (!token) {
@@ -60,6 +63,24 @@ export default function Home() {
     e.preventDefault();
     localStorage.clear();
     navigate('/login');
+  }
+
+  const handledDeleteForm = (formId) => {
+    const deleteFormApiurl = `${backEndUrl}/forms/deleteForm/${formId}`;
+    axios.delete(deleteFormApiurl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${token}`
+      }
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.message === "deleteForm successful") {
+          setUpdateForm(true);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
   }
 
   return (
@@ -119,13 +140,23 @@ export default function Home() {
           {forms.map((form) => (
             <List.Item key={form.formId}>
               <Panel bordered header={form.formName}>
-                <p>Form ID: {form.formId}</p>
-                <p>Created At: {form.createdTime}</p>
-                <Row>
-                  <Col xs={18}></Col>
+
+                <Row style={{ marginBottom: "2rem" }}>
+                  <Col xs={18}>
+                    <p>Form ID: {form.formId}</p>
+                    <p>Created At: {form.createdTime}</p>
+                  </Col>
                   <Col xs={6} style={{ textAlign: 'right' }}>
                     <Button appearance="primary" onClick={() => handleModifyForm(form.formId)}>
                       修改表單
+                    </Button>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col xs={18}></Col>
+                  <Col xs={6} style={{ textAlign: 'right' }}>
+                    <Button appearance="primary" color="red" onClick={() => handledDeleteForm(form.formId)}>
+                      刪除表單
                     </Button>
                   </Col>
                 </Row>
