@@ -12,7 +12,7 @@ export const GlobleVar = ({ children }) => {
   });
 
   const backEndUrl = "http://localhost:3000";
-  const fontEndUrl = "http://localhost:5173";
+  const fontEndUrl = "http://localhost:7777";
   const headers = { 'Content-Type': 'application/json' };
 
   const store = {

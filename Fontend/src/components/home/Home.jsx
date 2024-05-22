@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -17,8 +18,9 @@ import 'rsuite/dist/rsuite.min.css';
 import { StoreContext } from '../globleVar/GlobleVar';
 
 export default function Home() {
-  const { GloBackEndUrl } = useContext(StoreContext);
+  const { GloBackEndUrl, GloFontEndUrl } = useContext(StoreContext);
   const backEndUrl = GloBackEndUrl;
+  const fontEndUrl = GloFontEndUrl;
 
   const userData = localStorage.getItem('userData');
   const token = JSON.parse(userData).token;
@@ -83,88 +85,115 @@ export default function Home() {
       });
   }
 
-  return (
-    <Container>
-      <Header>
-        <Navbar appearance="inverse">
-          <Navbar.Brand href="#">Form Builder</Navbar.Brand>
+  const handledCopyForm = (formId) => {
+    const copyFormApiurl = `${fontEndUrl}/FillOutForm/${formId}`;
+    navigator.clipboard.writeText(copyFormApiurl)
+      .then(() => {
+        enqueueSnackbar("成功複製指令", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left'
+          }
+        });
+      })
+      .catch(() => {
+        enqueueSnackbar("複製指令失敗", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left'
+          }
+        });
+      });
+  }
 
-          <Nav>
-            <Nav.Item>
-              <Button
-                color="orange"
-                appearance="primary"
-                onClick={() => navigate('/createForm')}
-              >
-                CreateForm
-              </Button>
-            </Nav.Item>
-          </Nav>
-          <Nav pullRight>
-            {!token ? (
-              <>
-                <Nav.Item>
-                  <Button
-                    appearance="primary"
-                    onClick={() => navigate('/login')}
-                  >
-                    Login
-                  </Button>
-                </Nav.Item>
-                <Nav.Item>
-                  <Button
-                    appearance="primary"
-                    onClick={() => navigate('/register')}
-                  >
-                    Sign Up
-                  </Button>
-                </Nav.Item>
-              </>
-            ) : (
+  return (
+    <SnackbarProvider>
+      <Container>
+        <Header>
+          <Navbar appearance="inverse">
+            <Navbar.Brand href="#">Form Builder</Navbar.Brand>
+
+            <Nav>
               <Nav.Item>
                 <Button
+                  color="orange"
                   appearance="primary"
-                  onClick={(e) => handleLogout(e)}
+                  onClick={() => navigate('/createForm')}
                 >
-                  logout
+                  CreateForm
                 </Button>
               </Nav.Item>
-            )
-            }
-          </Nav>
-        </Navbar>
-      </Header>
-      <Content style={{ padding: '2rem' }}>
-        <h1>你的表單</h1>
-        <List>
-          {forms.map((form) => (
-            <List.Item key={form.formId}>
-              <Panel bordered header={form.formName}>
+            </Nav>
+            <Nav pullRight>
+              {!token ? (
+                <>
+                  <Nav.Item>
+                    <Button
+                      appearance="primary"
+                      onClick={() => navigate('/login')}
+                    >
+                      Login
+                    </Button>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Button
+                      appearance="primary"
+                      onClick={() => navigate('/register')}
+                    >
+                      Sign Up
+                    </Button>
+                  </Nav.Item>
+                </>
+              ) : (
+                <Nav.Item>
+                  <Button
+                    appearance="primary"
+                    onClick={(e) => handleLogout(e)}
+                  >
+                    logout
+                  </Button>
+                </Nav.Item>
+              )
+              }
+            </Nav>
+          </Navbar>
+        </Header>
+        <Content style={{ padding: '2rem' }}>
+          <h1>你的表單</h1>
+          <List>
+            {forms.map((form) => (
+              <List.Item key={form.formId}>
+                <Panel bordered header={form.formName}>
 
-                <Row style={{ marginBottom: "2rem" }}>
-                  <Col xs={18}>
-                    <p>Form ID: {form.formId}</p>
-                    <p>Created At: {form.createdTime}</p>
-                  </Col>
-                  <Col xs={6} style={{ textAlign: 'right' }}>
-                    <Button appearance="primary" onClick={() => handleModifyForm(form.formId)}>
-                      修改表單
-                    </Button>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col xs={18}></Col>
-                  <Col xs={6} style={{ textAlign: 'right' }}>
-                    <Button appearance="primary" color="red" onClick={() => handledDeleteForm(form.formId)}>
-                      刪除表單
-                    </Button>
-                  </Col>
-                </Row>
-              </Panel>
-            </List.Item>
-          ))}
-        </List>
-      </Content>
-    </Container>
+                  <Row style={{ marginBottom: "0rem" }}>
+                    <Col xs={18}>
+                      <p>Form ID: {form.formId}</p>
+                      <p>Created At: {form.createdTime}</p>
+                    </Col>
+                    <Col xs={2} >
+                      <Button appearance="primary" onClick={() => handleModifyForm(form.formId)}>
+                        修改表單
+                      </Button>
+                    </Col>
+                    <Col xs={2} >
+                      <Button appearance="primary" color="red" onClick={() => handledDeleteForm(form.formId)}>
+                        刪除表單
+                      </Button>
+                    </Col>
+                    <Col xs={2} >
+                      <Button appearance="primary" onClick={() => handledCopyForm(form.formId)}>
+                        複製表單
+                      </Button>
+                    </Col>
+                  </Row>
+                </Panel>
+              </List.Item>
+            ))}
+          </List>
+        </Content>
+      </Container>
+    </SnackbarProvider>
   );
 }

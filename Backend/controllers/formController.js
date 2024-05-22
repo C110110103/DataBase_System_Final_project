@@ -29,12 +29,15 @@ createForm = async (req, res) => {
     });
   }
 
+  console.log("createFormQuestion req.body.questions", req.body.questions);
+
   for (let i = 0; i < req.body.questions.length; i++) {
     let newQuestion = {
       formQuestionId: uuid.v4(),
       formId: newForm.formId,
       Description: req.body.questions[i].questionText,
       questionType: req.body.questions[i].questionType,
+      questionIndex: i,
     };
 
     try {
@@ -52,6 +55,7 @@ createForm = async (req, res) => {
         formOptionId: uuid.v4(),
         formQuestionId: newQuestion.formQuestionId,
         Description: req.body.questions[i].options[j],
+        optionIndex: j,
       };
 
       try {
@@ -99,7 +103,7 @@ const getFormById = async (req, res) => {
   try {
     let data = await formModels.getFormById(formId);
     returnData.formName = data[0].formName;
-    console.log("data", data[0]);
+    // console.log("data", data[0]);
   } catch (e) {
     console.log("getFormById occurred error:", e);
     return res.status(500).send({
@@ -111,12 +115,19 @@ const getFormById = async (req, res) => {
   let questions;
 
   try {
-    questions = await formModels.getFormQuestionsById(formId);
+    const tempquestions = await formModels.getFormQuestionsById(formId);
+
+    // Sort questions by questionIndex
+    tempquestions.sort((a, b) => a.questionIndex - b.questionIndex);
+
+    questions = tempquestions;
+
     for (let i = 0; i < questions.length; i++) {
       returnData.questions.push({
         questionText: questions[i].Description,
         questionType: questions[i].questionType,
-        options: [], // 初始化 options 为一个空数组
+        questionIndex: questions[i].questionIndex,
+        options: [], // Initialize options as an empty array
       });
     }
   } catch (e) {
@@ -133,8 +144,14 @@ const getFormById = async (req, res) => {
         questions[i].formQuestionId
       );
 
+      // Sort options by optionIndex
+      data.sort((a, b) => a.optionIndex - b.optionIndex);
+
       for (let j = 0; j < data.length; j++) {
-        returnData.questions[i].options.push(data[j].Description);
+        returnData.questions[i].options.push({
+          optionText: data[j].Description,
+          optionId: data[j].formOptionId,
+        });
       }
     } catch (e) {
       console.log("getFormOptionsById occurred error:", e);
@@ -209,6 +226,7 @@ modifyForm = async (req, res) => {
       formId: newForm.formId,
       Description: questions[i].questionText,
       questionType: questions[i].questionType,
+      questionIndex: i,
     };
 
     try {
@@ -225,7 +243,11 @@ modifyForm = async (req, res) => {
       let newOption = {
         formOptionId: uuid.v4(),
         formQuestionId: newQuestion.formQuestionId,
-        Description: questions[i].options[j],
+        Description:
+          questions[i].options[j].optionText === undefined
+            ? questions[i].options[j]
+            : questions[i].options[j].optionText,
+        optionIndex: j,
       };
 
       try {
@@ -296,10 +318,100 @@ deleteForm = async (req, res) => {
   return res.status(200).send({ message: "deleteForm successful" });
 };
 
+submitForm = async (req, res) => {
+  let newFormResponse = {
+    formResponseId: uuid.v4(),
+    formId: req.body.FormId,
+    userId: req.body.userId,
+    submissionTime: req.body.submissionTime,
+  };
+
+  try {
+    let result = await formModels.haveresponse(
+      newFormResponse.formId,
+      newFormResponse.userId
+    );
+
+    if (result.length > 0) {
+      return res.status(400).send({
+        message: "you have already submitted this form",
+      });
+    }
+  } catch (e) {
+    console.log("haveresponse occurred error:", e);
+    return res.status(500).send({
+      message: "haveresponse Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  try {
+    await formModels.createFormResponse(newFormResponse);
+  } catch (e) {
+    console.log("createFormResponse occurred error:", e);
+    return res.status(500).send({
+      message: "createFormResponse Error occurred while querying database",
+      error: e,
+    });
+  }
+  console.log("req.body.responses", req.body.responses);
+
+  for (let i = 0; i < Object.keys(req.body.responses).length; i++) {
+    const response = req.body.responses[i];
+
+    if (Array.isArray(response)) {
+      for (let j = 0; j < response.length; j++) {
+        let newResponseDetail = {
+          formResponseDetailId: uuid.v4(),
+          formResponseId: newFormResponse.formResponseId,
+          formOptionId: response[j].optionId,
+          optionText: response[j].optionText,
+        };
+
+        console.log("newResponseDetail", newResponseDetail);
+
+        try {
+          await formModels.createFormResponseDetail(newResponseDetail);
+        } catch (e) {
+          console.log("createFormResponseDetail occurred error:", e);
+          return res.status(500).send({
+            message:
+              "createFormResponseDetail Error occurred while querying database",
+            error: e,
+          });
+        }
+      }
+    } else {
+      let newResponseDetail = {
+        formResponseDetailId: uuid.v4(),
+        formResponseId: newFormResponse.formResponseId,
+        formOptionId: response.optionId,
+        optionText: response.optionText,
+      };
+
+      console.log("newResponseDetail", newResponseDetail);
+
+      try {
+        await formModels.createFormResponseDetail(newResponseDetail);
+      } catch (e) {
+        console.log("createFormResponseDetail occurred error:", e);
+        return res.status(500).send({
+          message:
+            "createFormResponseDetail Error occurred while querying database",
+          error: e,
+        });
+      }
+    }
+  }
+
+  return res.status(200).send({ message: "submitForm successful" });
+};
+
 module.exports = {
   createForm,
   getAllform,
   getFormById,
   modifyForm,
   deleteForm,
+  submitForm,
 };

@@ -28,12 +28,13 @@ createForm = (newForm) => {
 createFormQuestion = (newQuestion) => {
   return new Promise((resolve, reject) => {
     var sql =
-      "insert into formQuestion (formQuestionId, formId, Description, questionType) values (?, ?, ?, ?)";
+      "insert into formQuestion (formQuestionId, formId, Description, questionType, questionIndex) values (?, ?, ?, ?, ?)";
     var sqlArr = [
       newQuestion.formQuestionId,
       newQuestion.formId,
       newQuestion.Description,
       newQuestion.questionType,
+      newQuestion.questionIndex,
     ];
     var callBack = (err, data) => {
       if (err) {
@@ -52,11 +53,12 @@ createFormQuestion = (newQuestion) => {
 createFormOption = (newOption) => {
   return new Promise((resolve, reject) => {
     var sql =
-      "insert into formOption (formOptionId, formQuestionId, Description) values (?, ?, ?)";
+      "insert into formOption (formOptionId, formQuestionId, Description, optionIndex) values (?, ?, ?, ?)";
     var sqlArr = [
       newOption.formOptionId,
       newOption.formQuestionId,
       newOption.Description,
+      newOption.optionIndex,
     ];
     var callBack = (err, data) => {
       if (err) {
@@ -235,6 +237,72 @@ deleteForm = (formId) => {
   });
 };
 
+createFormResponse = (newFormResponse) => {
+  return new Promise((resolve, reject) => {
+    var sql =
+      "insert into formResponse (formResponseId, formId, userId, submissionTime) values (?, ?, ?, ?)";
+    var sqlArr = [
+      newFormResponse.formResponseId,
+      newFormResponse.formId,
+      newFormResponse.userId,
+      newFormResponse.submissionTime,
+    ];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("createFormResponse 建立出错 : ", err);
+        reject(err);
+      } else {
+        console.log("createFormResponse 建立结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+createFormResponseDetail = (newFormResponseDetail) => {
+  return new Promise((resolve, reject) => {
+    var sql =
+      "insert into formResponseDetail (formResponseDetailId, formResponseId, formOptionId, optionText) values (?, ?, ?, ?)";
+    var sqlArr = [
+      newFormResponseDetail.formResponseDetailId,
+      newFormResponseDetail.formResponseId,
+      newFormResponseDetail.formOptionId,
+      newFormResponseDetail.optionText,
+    ];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("createFormResponseDetail 建立出错 : ", err);
+        reject(err);
+      } else {
+        console.log("createFormResponseDetail 建立结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+haveresponse = (formId, userId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select * from formResponse where formId = ? and userId = ?";
+    var sqlArr = [formId, userId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("haveresponse 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("haveresponse 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
 module.exports = {
   createForm,
   createFormQuestion,
@@ -248,4 +316,7 @@ module.exports = {
   findFormQustionId,
   deleteFormOptions,
   deleteForm,
+  createFormResponse,
+  createFormResponseDetail,
+  haveresponse,
 };

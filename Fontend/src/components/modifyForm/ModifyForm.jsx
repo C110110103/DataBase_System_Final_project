@@ -27,7 +27,7 @@ const questionTypes = [
 ];
 
 function ModifyForm() {
-  const { GloBackEndUrl, Gloheaders } = useContext(StoreContext);
+  const { GloBackEndUrl } = useContext(StoreContext);
   const backEndUrl = GloBackEndUrl;
 
   const { FormId } = useParams();
@@ -256,7 +256,7 @@ function ModifyForm() {
                           <Col xs={24} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                             <Input
                               placeholder={`Option ${oIndex + 1}`}
-                              value={option}
+                              value={option.optionText}
                               onChange={(value) => handleOptionChange(index, oIndex, value)}
                               style={{ marginRight: 10 }}
                             />
@@ -284,7 +284,7 @@ function ModifyForm() {
                         <Col xs={24} key={oIndex} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                           <Input
                             placeholder={`Option ${oIndex + 1}`}
-                            value={option}
+                            value={option.optionText}
                             onChange={(value) => handleOptionChange(index, oIndex, value)}
                             style={{ marginRight: 10 }}
                           />

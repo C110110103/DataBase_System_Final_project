@@ -34,20 +34,37 @@ async function initialDatabase() {
       creatorId VARCHAR(50) NOT NULL
       )`
     );
-
     await connection.query(
       `CREATE TABLE IF NOT EXISTS formQuestion (
       formQuestionId VARCHAR(50) NOT NULL PRIMARY KEY,
       formId VARCHAR(50) NOT NULL,
       Description VARCHAR(500) NOT NULL,
-      questionType VARCHAR(50) NOT NULL
+      questionType VARCHAR(50) NOT NULL,
+      questionIndex INT NOT NULL DEFAULT 0
       )`
     );
     await connection.query(
       `CREATE TABLE IF NOT EXISTS formOption (
       formOptionId VARCHAR(50) NOT NULL PRIMARY KEY,
       formQuestionId VARCHAR(50) NOT NULL,
-      Description VARCHAR(500) NOT NULL
+      Description VARCHAR(500) NOT NULL,
+      optionIndex INT NOT NULL DEFAULT 0
+      )`
+    );
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS formResponse (
+      formResponseId VARCHAR(50) NOT NULL PRIMARY KEY,
+      formId VARCHAR(50) NOT NULL,
+      userId VARCHAR(50) NOT NULL,
+      submissionTime VARCHAR(50) NOT NULL
+      )`
+    );
+    await connection.query(
+      `CREATE TABLE IF NOT EXISTS formResponseDetail (
+      formResponseDetailId VARCHAR(50) NOT NULL PRIMARY KEY,
+      formResponseId VARCHAR(50) NOT NULL,
+      formOptionId VARCHAR(50) NOT NULL,
+      optionText VARCHAR(500) NOT NULL
       )`
     );
 

@@ -7,6 +7,7 @@ const Login = lazy(() => import("./components/login/login"));
 const CreateForm = lazy(() => import("./components/createForm/CreateForm"));
 const Home = lazy(() => import("./components/home/Home"));
 const ModifyForm = lazy(() => import("./components/modifyForm/ModifyForm"));
+const FillOutForm = lazy(() => import("./components/fillOutForm/FillOutForm"));
 
 function App() {
 
@@ -61,6 +62,16 @@ function App() {
             element={
               <Suspense fallback={<div>Loading...</div>} >
                 <ModifyForm />
+              </Suspense>
+            }
+            exact
+          ></Route>
+
+          <Route
+            path="/FillOutForm/:FormId"
+            element={
+              <Suspense fallback={<div>Loading...</div>} >
+                <FillOutForm />
               </Suspense>
             }
             exact
