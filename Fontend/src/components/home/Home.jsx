@@ -108,6 +108,10 @@ export default function Home() {
       });
   }
 
+  const handledStatist = (formId) => {
+    navigate(`/formStatistics/${formId}`);
+  }
+
   return (
     <SnackbarProvider>
       <Container>
@@ -168,23 +172,22 @@ export default function Home() {
                 <Panel bordered header={form.formName}>
 
                   <Row style={{ marginBottom: "0rem" }}>
-                    <Col xs={18}>
+                    <Col xs={15}>
                       <p>Form ID: {form.formId}</p>
                       <p>Created At: {form.createdTime}</p>
                     </Col>
-                    <Col xs={2} >
+                    <Col xs={9} style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Button appearance="primary" onClick={() => handleModifyForm(form.formId)}>
                         修改表單
                       </Button>
-                    </Col>
-                    <Col xs={2} >
                       <Button appearance="primary" color="red" onClick={() => handledDeleteForm(form.formId)}>
                         刪除表單
                       </Button>
-                    </Col>
-                    <Col xs={2} >
                       <Button appearance="primary" onClick={() => handledCopyForm(form.formId)}>
-                        複製表單
+                        複製表單連結
+                      </Button>
+                      <Button appearance="primary" onClick={() => handledStatist(form.formId)}>
+                        查看表單統計資料
                       </Button>
                     </Col>
                   </Row>

@@ -8,6 +8,7 @@ const CreateForm = lazy(() => import("./components/createForm/CreateForm"));
 const Home = lazy(() => import("./components/home/Home"));
 const ModifyForm = lazy(() => import("./components/modifyForm/ModifyForm"));
 const FillOutForm = lazy(() => import("./components/fillOutForm/FillOutForm"));
+const FormStatistics = lazy(() => import("./components/statistics/formStatistics"));
 
 function App() {
 
@@ -72,6 +73,16 @@ function App() {
             element={
               <Suspense fallback={<div>Loading...</div>} >
                 <FillOutForm />
+              </Suspense>
+            }
+            exact
+          ></Route>
+
+          <Route
+            path="/formStatistics/:FormId"
+            element={
+              <Suspense fallback={<div>Loading...</div>} >
+                <FormStatistics />
               </Suspense>
             }
             exact

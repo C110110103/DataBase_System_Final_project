@@ -303,6 +303,42 @@ haveresponse = (formId, userId) => {
   });
 };
 
+getFormResponses = (formId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select * from formResponse where formId = ?";
+    var sqlArr = [formId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("getFormResponses 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("getFormResponses 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
+getFormResponseDetails = (formResponseId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select * from formResponseDetail where formResponseId = ?";
+    var sqlArr = [formResponseId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("getFormResponseDetails 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("getFormResponseDetails 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
 module.exports = {
   createForm,
   createFormQuestion,
@@ -319,4 +355,6 @@ module.exports = {
   createFormResponse,
   createFormResponseDetail,
   haveresponse,
+  getFormResponses,
+  getFormResponseDetails,
 };

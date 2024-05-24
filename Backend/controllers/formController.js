@@ -2,6 +2,7 @@ const createFormValidation =
   require("../tools/validation").createFormValidation;
 const uuid = require("uuid");
 const formModels = require("../models/formModels");
+const { options } = require("joi");
 
 createForm = async (req, res) => {
   let { error } = createFormValidation(req.body);
@@ -407,6 +408,116 @@ submitForm = async (req, res) => {
   return res.status(200).send({ message: "submitForm successful" });
 };
 
+getFormstatisticalData = async (req, res) => {
+  let formId = req.params.FormId;
+
+  let returnData = {
+    formName: "",
+    questions: [],
+    responses: [],
+  };
+
+  try {
+    let data = await formModels.getFormById(formId);
+    returnData.formName = data[0].formName;
+  } catch (e) {
+    console.log("getFormById occurred error:", e);
+    return res.status(500).send({
+      message: "getFormById Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  let responsesId = [];
+
+  try {
+    let data = await formModels.getFormResponses(formId);
+    for (let i = 0; i < data.length; i++) {
+      responsesId.push(data[i].formResponseId);
+    }
+  } catch (e) {
+    console.log("getFormResponses occurred error:", e);
+    return res.status(500).send({
+      message: "getFormResponses Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  let questions;
+
+  try {
+    const tempquestions = await formModels.getFormQuestionsById(formId);
+
+    // Sort questions by questionIndex
+    tempquestions.sort((a, b) => a.questionIndex - b.questionIndex);
+
+    questions = tempquestions;
+
+    for (let i = 0; i < questions.length; i++) {
+      returnData.questions.push({
+        questionText: questions[i].Description,
+        questionType: questions[i].questionType,
+        options: [], // Initialize options as an empty array
+      });
+    }
+  } catch (e) {
+    console.log("getFormQuestionsById occurred error:", e);
+    return res.status(500).send({
+      message: "getFormQuestionsById Error occurred while querying database",
+      error: e,
+    });
+  }
+
+  for (let i = 0; i < questions.length; i++) {
+    try {
+      let data = await formModels.getFormOptionsById(
+        questions[i].formQuestionId
+      );
+
+      // Sort options by optionIndex
+      data.sort((a, b) => a.optionIndex - b.optionIndex);
+
+      for (let j = 0; j < data.length; j++) {
+        returnData.questions[i].options.push({
+          optionText: data[j].Description,
+          optionId: data[j].formOptionId,
+        });
+      }
+    } catch (e) {
+      console.log("getFormOptionsById occurred error:", e);
+      return res.status(500).send({
+        message: "getFormOptionsById Error occurred while querying database",
+        error: e,
+      });
+    }
+  }
+
+  for (let i = 0; i < responsesId.length; i++) {
+    try {
+      let data = await formModels.getFormResponseDetails(responsesId[i]);
+      let response = [];
+      for (let j = 0; j < data.length; j++) {
+        response.push({
+          optionId: data[j].formOptionId,
+          optionText: data[j].optionText,
+        });
+      }
+      returnData.responses.push(response);
+    } catch (e) {
+      console.log("getFormResponseDetails occurred error:", e);
+      return res.status(500).send({
+        message:
+          "getFormResponseDetails Error occurred while querying database",
+        error: e,
+      });
+    }
+  }
+
+  return res
+    .status(200)
+    .send({ message: "getFormstatisticalData successful", returnData });
+};
+
 module.exports = {
   createForm,
   getAllform,
@@ -414,4 +525,5 @@ module.exports = {
   modifyForm,
   deleteForm,
   submitForm,
+  getFormstatisticalData,
 };
