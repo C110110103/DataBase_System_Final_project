@@ -28,14 +28,10 @@ function StatisticsPage() {
 
   const getStasticalDataApiurl = `${backEndUrl}/forms/getFormstatisticalData/${FormId}`;
 
-
   const navigate = useNavigate();
   const [formName, setFormName] = useState('');
   const [questions, setQuestions] = useState([]);
   const [responses, setResponses] = useState([]);
-
-
-
 
   useEffect(() => {
     if (token && getStasticalDataApiurl) {
@@ -55,10 +51,7 @@ function StatisticsPage() {
           console.log(err);
         })
     }
-
   }, [token, getStasticalDataApiurl]);
-
-
 
   const handleReturnHome = (e) => {
     e.preventDefault();
@@ -123,15 +116,13 @@ function StatisticsPage() {
                 </Table>
               )}
               {question.questionType === 'text' && (
-                <Table
-                  height={responses.flat().filter(response => response.optionId === question.options[0].optionId).length * 100}
-                  data={responses.flat().filter(response => response.optionId === question.options[0].optionId).map(response => ({ text: response.optionText }))}
-                >
-                  <Column flexGrow={1} align="center">
-                    <HeaderCell>Responses</HeaderCell>
-                    <Cell dataKey="text" />
-                  </Column>
-                </Table>
+                <div>
+                  {responses.flat().filter(response => response.optionId === question.options[0].optionId).map((response, rIndex) => (
+                    <Panel key={rIndex} bordered style={{ marginBottom: 10 }}>
+                      {response.optionText}
+                    </Panel>
+                  ))}
+                </div>
               )}
             </Panel>
           ))}

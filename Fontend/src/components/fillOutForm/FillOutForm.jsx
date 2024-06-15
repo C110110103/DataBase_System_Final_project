@@ -27,15 +27,27 @@ function FillForm() {
 
   const { FormId } = useParams();
   const navigate = useNavigate();
-  const userData = localStorage.getItem('userData');
-  const token = JSON.parse(userData).token;
-  const userId = JSON.parse(userData).user.userId;
 
   const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}`;
   const [form, setForm] = useState(null);
   const [responses, setResponses] = useState({});
 
   useEffect(() => {
+    const userData = localStorage.getItem('userData');
+
+
+    console.log(userData)
+    if (userData === null) {
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
+      return;
+    }
+
+    const token = JSON.parse(userData).token;
+    const userId = JSON.parse(userData).user.userId;
+
+
     if (token && getFormByIdApiurl) {
       axios.get(getFormByIdApiurl, {
         headers: {
@@ -63,7 +75,7 @@ function FillForm() {
           console.log(err);
         });
     }
-  }, [token, getFormByIdApiurl, FormId]);
+  }, [getFormByIdApiurl, FormId, navigate]);
 
   const handleResponseChange = (index, value) => {
     const newResponses = { ...responses };
@@ -84,6 +96,9 @@ function FillForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const userData = localStorage.getItem('userData');
+    const token = JSON.parse(userData).token;
+    const userId = JSON.parse(userData).user.userId;
     const submissionTime = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 
     const data = {
