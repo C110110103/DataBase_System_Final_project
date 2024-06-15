@@ -27,14 +27,22 @@ export default function Register() {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // 阻止默认提交行为
-    let state = SubmitRegister(data, RegisterApiurl, headers); // 调用 Submit 函数
-    console.log("state", state);
-    if (state) {
-      navigate('/login');
+    try {
+      let state = await SubmitRegister(data, RegisterApiurl, headers); // 调用 Submit 函数并等待其结果
+      console.log("state", state);
+      if (state) {
+        setTimeout(() => {
+          navigate("/login");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      // 你可以在这里处理错误，例如显示错误信息给用户
     }
   }
+
 
   return (
     <>
