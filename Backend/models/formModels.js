@@ -339,6 +339,24 @@ getFormResponseDetails = (formResponseId) => {
   });
 };
 
+haveresponse = (formId, userId) => {
+  return new Promise((resolve, reject) => {
+    var sql = "select * from formResponse where formId = ? and userId = ?";
+    var sqlArr = [formId, userId];
+    var callBack = (err, data) => {
+      if (err) {
+        console.log("haveresponse 查询出错 : ", err);
+        reject(err);
+      } else {
+        console.log("haveresponse 查询结果 : ", data);
+        resolve(data);
+      }
+    };
+
+    db.sqlConnect(sql, sqlArr, callBack);
+  });
+};
+
 module.exports = {
   createForm,
   createFormQuestion,
@@ -357,4 +375,5 @@ module.exports = {
   haveresponse,
   getFormResponses,
   getFormResponseDetails,
+  haveresponse,
 };

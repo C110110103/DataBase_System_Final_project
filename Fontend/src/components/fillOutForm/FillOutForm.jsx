@@ -28,9 +28,10 @@ function FillForm() {
   const { FormId } = useParams();
   const navigate = useNavigate();
 
-  const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}`;
+  const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}/`;
   const [form, setForm] = useState(null);
   const [responses, setResponses] = useState({});
+  const [haveResponse, setHaveResponse] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem('userData');
@@ -49,7 +50,7 @@ function FillForm() {
 
 
     if (token && getFormByIdApiurl) {
-      axios.get(getFormByIdApiurl, {
+      axios.get(getFormByIdApiurl + userId, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `${token}`
@@ -72,7 +73,10 @@ function FillForm() {
           setResponses(initialResponses);
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response.data.message);
+          if (err.response.data.message === "you have already submitted this form") {
+            setHaveResponse(true);
+          }
         });
     }
   }, [getFormByIdApiurl, FormId, navigate]);
@@ -139,6 +143,34 @@ function FillForm() {
     e.preventDefault();
     navigate('/home');
   };
+
+  if (haveResponse) {
+    return (
+      <Container>
+        <Header
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            zIndex: 1000,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            padding: '10px 20px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Button appearance="primary" size='lg' onClick={handleReturnHome}>
+            回到首頁
+          </Button>
+        </Header>
+        <div style={{ marginTop: '250px', textAlign: 'center' }}>
+          <h2>我們已經有您的回答了，您無法回答同一份問卷兩次</h2>
+        </div>
+      </Container>
+    );
+  }
 
   if (!form) return <div>Loading...</div>;
 
