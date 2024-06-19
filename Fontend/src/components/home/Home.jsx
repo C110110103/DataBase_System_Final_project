@@ -79,9 +79,23 @@ export default function Home() {
         console.log(res.data);
         if (res.data.message === "deleteForm successful") {
           setUpdateForm(true);
+          enqueueSnackbar("刪除表單成功", {
+            variant: "success",
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left'
+            }
+          });
         }
       }).catch((err) => {
         console.log(err);
+        enqueueSnackbar("刪除表單失敗", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'left'
+          }
+        });
       });
   }
 

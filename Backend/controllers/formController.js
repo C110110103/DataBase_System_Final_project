@@ -93,26 +93,8 @@ getAllform = async (req, res) => {
 
 const getFormById = async (req, res) => {
   let formId = req.params.FormId;
-  let userId = req.params.userId;
 
   console.log("formId", formId);
-  console.log("userId", userId);
-
-  try {
-    let result = await formModels.haveresponse(formId, userId);
-
-    if (result.length > 0) {
-      return res.status(400).send({
-        message: "you have already submitted this form",
-      });
-    }
-  } catch (e) {
-    console.log("haveresponse occurred error:", e);
-    return res.status(500).send({
-      message: "haveresponse Error occurred while querying database",
-      error: e,
-    });
-  }
 
   let returnData = {
     formName: "",
@@ -536,6 +518,27 @@ getFormstatisticalData = async (req, res) => {
     .send({ message: "getFormstatisticalData successful", returnData });
 };
 
+const haveResponse = async (req, res) => {
+  let formId = req.params.FormId;
+  let userId = req.params.userId;
+
+  try {
+    let result = await formModels.haveresponse(formId, userId);
+
+    if (result.length > 0) {
+      return res.status(200).send({ message: "haveResponse" });
+    } else {
+      return res.status(200).send({ message: "Not haveResponse" });
+    }
+  } catch (e) {
+    console.log("haveresponse occurred error:", e);
+    return res.status(500).send({
+      message: "haveresponse Error occurred while querying database",
+      error: e,
+    });
+  }
+};
+
 module.exports = {
   createForm,
   getAllform,
@@ -544,4 +547,5 @@ module.exports = {
   deleteForm,
   submitForm,
   getFormstatisticalData,
+  haveResponse,
 };

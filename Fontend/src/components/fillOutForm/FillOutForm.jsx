@@ -28,7 +28,9 @@ function FillForm() {
   const { FormId } = useParams();
   const navigate = useNavigate();
 
-  const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}/`;
+  const getFormByIdApiurl = `${backEndUrl}/forms/getFormById/${FormId}`;
+  const haveResponseApiurl = `${backEndUrl}/forms/haveResponse/${FormId}/`;
+
   const [form, setForm] = useState(null);
   const [responses, setResponses] = useState({});
   const [haveResponse, setHaveResponse] = useState(false);
@@ -48,9 +50,31 @@ function FillForm() {
     const token = JSON.parse(userData).token;
     const userId = JSON.parse(userData).user.userId;
 
+    let lcHaveResponse = false;
 
-    if (token && getFormByIdApiurl) {
-      axios.get(getFormByIdApiurl + userId, {
+    if (token && haveResponseApiurl) {
+      axios.get(haveResponseApiurl + userId, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${token}`
+        }
+      })
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.message === "haveResponse") {
+            lcHaveResponse = true;
+            setHaveResponse(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+
+    }
+
+    if (token && getFormByIdApiurl && !lcHaveResponse) {
+      axios.get(getFormByIdApiurl, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `${token}`
@@ -79,7 +103,7 @@ function FillForm() {
           }
         });
     }
-  }, [getFormByIdApiurl, FormId, navigate]);
+  }, [getFormByIdApiurl, FormId, navigate, haveResponseApiurl]);
 
   const handleResponseChange = (index, value) => {
     const newResponses = { ...responses };

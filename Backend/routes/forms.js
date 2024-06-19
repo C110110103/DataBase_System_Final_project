@@ -5,7 +5,8 @@ var form = require("../controllers/formController");
 /* GET users listing. */
 router.post("/createForm", form.createForm);
 router.get("/getForm/:creatorId", form.getAllform);
-router.get("/getFormById/:FormId/:userId", form.getFormById);
+router.get("/getFormById/:FormId", form.getFormById);
+router.get("/haveResponse/:FormId/:userId", form.haveResponse);
 router.patch("/modifyForm", form.modifyForm);
 router.delete("/deleteForm/:FormId", form.deleteForm);
 router.post("/submitForm", form.submitForm);

@@ -3,7 +3,7 @@ const mysql = require("mysql");
 const pool = mysql.createPool({
   connectionLimit: 10, // 设置最大连接数
   host: "localhost",
-  port: "3306", // 请注意，这里应该是 "port" 而不是 "post"
+  port: "3306",
   user: "root",
   password: "12345678",
   database: "mydb",

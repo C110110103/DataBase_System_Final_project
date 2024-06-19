@@ -46,6 +46,7 @@ function StatisticsPage() {
           setFormName(res.data.returnData.formName);
           setQuestions(res.data.returnData.questions);
           setResponses(res.data.returnData.responses);
+          console.log(res.data.returnData.responses)
         })
         .catch((err) => {
           console.log(err);
